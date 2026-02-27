@@ -6,13 +6,17 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-import jakarta.validation.Valid;
+
 import com.studyhub.studyhub.model.User;
+import com.studyhub.studyhub.security.JwtUtil;
 import com.studyhub.studyhub.service.UserService;
 
+import jakarta.validation.Valid;
 @RestController
 @RequestMapping("/api/auth")
 public class AuthController {
+    @Autowired
+private JwtUtil jwtUtil;
 
     @Autowired
     private UserService userService;
@@ -26,15 +30,15 @@ public User signup(@Valid @RequestBody User user) {
     public String test() {
         return "Auth Controller Working!";
     }
- @PostMapping("/login")
+@PostMapping("/login")
 public String login(@RequestBody User user) {
 
     User existingUser = userService.login(user.getEmail(), user.getPassword());
 
     if (existingUser != null) {
-        return "Login Successful";
+        return jwtUtil.generateToken(existingUser.getEmail());
     } else {
-        return "Invalid Email or Password";
+        throw new RuntimeException("Invalid Email or Password");
     }
 }
 }

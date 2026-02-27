@@ -38,4 +38,20 @@ public class NoteService {
     public List<Note> getPublicNotes() {
         return noteRepository.findByIsPublicTrue();
     }
+    // UPDATE note
+public Note updateNote(Long noteId, Note updatedNote) {
+    Note note = noteRepository.findById(noteId)
+            .orElseThrow(() -> new RuntimeException("Note not found"));
+
+    note.setTitle(updatedNote.getTitle());
+    note.setContent(updatedNote.getContent());
+    note.setPublic(updatedNote.isPublic());
+
+    return noteRepository.save(note);
+}
+
+// DELETE note
+public void deleteNote(Long noteId) {
+    noteRepository.deleteById(noteId);
+}
 }
